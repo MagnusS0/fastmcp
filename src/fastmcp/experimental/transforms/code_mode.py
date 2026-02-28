@@ -149,8 +149,8 @@ class CodeMode(CatalogTransform):
         self.sandbox_provider = sandbox_provider or MontySandboxProvider()
         self._cached_search_tool: Tool | None = None
         self._cached_execute_tool: Tool | None = None
-        self._search_result_serializer: SearchResultSerializer = (
-            search_result_serializer or serialize_tools_for_output_json
+        self._search_result_serializer: SearchResultSerializer | None = (
+            search_result_serializer
         )
 
         if search_transform is None:
@@ -220,9 +220,11 @@ class CodeMode(CatalogTransform):
             """
             tools = await transform.get_tool_catalog(ctx)
             results = await transform._search_transform._search(tools, query)
-            return await _invoke_serializer(
-                transform._search_result_serializer, results
-            )
+            if transform._search_result_serializer is not None:
+                return await _invoke_serializer(
+                    transform._search_result_serializer, results
+                )
+            return await transform._search_transform._render_results(results)
 
         return Tool.from_function(fn=search, name=self.search_tool_name)
 

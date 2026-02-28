@@ -544,10 +544,10 @@ def test_schema_type_unions(schema: Any, expected: str) -> None:
         ("string", ["**Parameters**", "- `value` (any)"]),
         # Scalar schema without properties → type label used
         ({"type": "string"}, ["**Parameters**", "- `value` (string)"]),
-        # Empty properties dict → type label used
+        # Empty properties dict → zero-argument tool
         (
             {"type": "object", "properties": {}},
-            ["**Parameters**", "- `value` (object)"],
+            ["**Parameters**", "*(no parameters)*"],
         ),
     ],
 )

@@ -120,8 +120,13 @@ def _schema_section(schema: dict[str, Any] | None, title: str) -> list[str]:
     props = schema.get("properties")
     raw_required = schema.get("required")
     req = set(raw_required) if isinstance(raw_required, list) else set()
-    if not isinstance(props, dict) or not props:
+    if props is None:
+        # Not a properties-based schema — treat as a single unnamed value.
         lines.append(f"- `value` ({_schema_type(schema)})")
+        return lines
+    if not props:
+        # Object schema with no properties — zero-argument tool.
+        lines.append("*(no parameters)*")
         return lines
 
     for name, field in props.items():
